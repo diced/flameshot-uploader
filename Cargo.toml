@@ -1,0 +1,21 @@
+[package]
+name = "fu"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "fu"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.11.3", features = ["json", "native-tls", "multipart", "blocking"], default-features = false }
+colored = "2.0.0"
+clap = "3.0.0-beta.2"
+
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.68"
+toml = "0.5.8"
+regex = "1.5.4"
+chrono = "0.4.19"
+notify-rust = "4"
