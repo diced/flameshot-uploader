@@ -17,7 +17,7 @@ pub fn ss(screenshot_type: ScreenshotType, no_upload: bool) -> Res<()> {
 
   let bytes = screenshot(screenshot_type)?;
   let st = String::from_utf8_lossy(&bytes);
-  if st == "screenshot aborted\n" {
+  if st == "flameshot: info: Screenshot aborted.\n" {
     if config.notify {
       Notification::new()
         .summary("Flameshot")
@@ -28,12 +28,15 @@ pub fn ss(screenshot_type: ScreenshotType, no_upload: bool) -> Res<()> {
     error!("screenshort aborted");
   }
 
+
+  let path = SXCU::save_image(bytes.clone())?;
+  if ClipboardBackend::XCLIP == config.clipboard_backend {
+    xclip_copy_image(path)?;
+  }
+
   if let Some(default) = config.default {
     if no_upload {
-      let path = SXCU::save_image(bytes)?;
-
       if ClipboardBackend::XCLIP == config.clipboard_backend {
-        xclip_copy_image(path)?;
         if config.notify {
           Notification::new()
             .summary("Flameshot")
@@ -67,10 +70,7 @@ pub fn ss(screenshot_type: ScreenshotType, no_upload: bool) -> Res<()> {
       }
     }
   } else {
-    let path = SXCU::save_image(bytes)?;
-
     if ClipboardBackend::XCLIP == config.clipboard_backend {
-      xclip_copy_image(path)?;
       if config.notify {
         Notification::new()
           .summary("Flameshot")
