@@ -16,8 +16,7 @@ pub fn ss(screenshot_type: ScreenshotType, no_upload: bool) -> Res<()> {
   let config = Config::read()?;
 
   let bytes = screenshot(screenshot_type)?;
-  let st = String::from_utf8_lossy(&bytes);
-  if st == "flameshot: info: Screenshot aborted.\n" {
+  if bytes.is_none() {
     if config.notify {
       Notification::new()
         .summary("Flameshot")
@@ -27,6 +26,8 @@ pub fn ss(screenshot_type: ScreenshotType, no_upload: bool) -> Res<()> {
     }
     error!("screenshort aborted");
   }
+
+  let bytes = bytes.unwrap();
 
 
   let path = SXCU::save_image(bytes.clone())?;

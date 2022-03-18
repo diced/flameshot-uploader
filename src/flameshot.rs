@@ -8,7 +8,7 @@ pub enum ScreenshotType {
   FULL,
 }
 
-pub fn screenshot(screenshot_type: ScreenshotType) -> Res<Vec<u8>> {
+pub fn screenshot(screenshot_type: ScreenshotType) -> Res<Option<Vec<u8>>> {
   match screenshot_type {
     ScreenshotType::GUI => screenshot_gui(),
     ScreenshotType::SCREEN => screenshot_screen(),
@@ -16,7 +16,7 @@ pub fn screenshot(screenshot_type: ScreenshotType) -> Res<Vec<u8>> {
   }
 }
 
-pub fn screenshot_gui() -> Res<Vec<u8>> {
+pub fn screenshot_gui() -> Res<Option<Vec<u8>>> {
   let output = Command::new("flameshot")
     .arg("gui")
     .arg("-r")
@@ -24,10 +24,14 @@ pub fn screenshot_gui() -> Res<Vec<u8>> {
     .spawn()?
     .wait_with_output()?;
 
-  Ok(output.stdout)
+  if !output.status.success() {
+    Ok(None)
+  } else {
+    Ok(Some(output.stdout))
+  }
 }
 
-pub fn screenshot_screen() -> Res<Vec<u8>> {
+pub fn screenshot_screen() -> Res<Option<Vec<u8>>> {
   let output = Command::new("flameshot")
     .arg("screen")
     .arg("-r")
@@ -35,10 +39,14 @@ pub fn screenshot_screen() -> Res<Vec<u8>> {
     .spawn()?
     .wait_with_output()?;
 
-  Ok(output.stdout)
+  if !output.status.success() {
+    Ok(None)
+  } else {
+    Ok(Some(output.stdout))
+  }
 }
 
-pub fn screenshot_full() -> Res<Vec<u8>> {
+pub fn screenshot_full() -> Res<Option<Vec<u8>>> {
   let output = Command::new("flameshot")
     .arg("full")
     .arg("-r")
@@ -46,5 +54,9 @@ pub fn screenshot_full() -> Res<Vec<u8>> {
     .spawn()?
     .wait_with_output()?;
 
-  Ok(output.stdout)
+  if !output.status.success() {
+    Ok(None)
+  } else {
+    Ok(Some(output.stdout))
+  }
 }
